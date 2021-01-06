@@ -1,0 +1,13 @@
+name: playground_for_dart
+description: An absolute bare-bones web app.
+# version: 1.0.0
+#homepage: https://www.example.com
+
+environment:
+  sdk: '>=2.8.1 <3.0.0'
+
+dependencies:
+ dart_appwrite: ^0.1.0
+
+dev_dependencies:
+  pedantic: ^1.9.0

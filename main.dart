@@ -18,7 +18,7 @@ Future<void> main() async {
   await listCollection();
   await addDoc();
   await listDoc();
-  // await uploadFile();
+  await uploadFile();
   await createUser('${DateTime.now().millisecondsSinceEpoch}@example.com',
       'user@123', 'Some user');
   await listUser();
@@ -79,12 +79,17 @@ Future<void> listDoc() async {
   print(response.data);
 }
 
-/* Future<void> uploadFile () async {
+Future<void> uploadFile () async {
   final storage = Storage(client);
   print('Running Upload File API');
-  final response = await storage.createFile();
+  final file = await MultipartFile.fromFile('./nature.jpg',filename: 'nature.jpg');
+  final response = await storage.createFile(
+    file: file,//multipart file
+    read: ['*'],
+    write: ['*'],
+  );
   print(response);
-} */
+}
 
 Future<void> createUser(email, password, name) async {
   final users = Users(client);

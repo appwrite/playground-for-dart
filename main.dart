@@ -22,6 +22,8 @@ Future<void> main() async {
   await createUser('${DateTime.now().millisecondsSinceEpoch}@example.com',
       'user@123', 'Some user');
   await listUser();
+  await createFunction();
+  await listFunctions();
 }
 
 Future<void> createCollection() async {
@@ -131,6 +133,28 @@ Future<void> listUser() async {
   try {
     final response = await users.list();
     print(response.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
+}
+
+Future<void> createFunction() async {
+  final functions = Functions(client);
+  print('Running Create Function API');
+  try {
+    final res = await functions.create(name: 'test function', execute: [], env: 'dart-2.10');
+    print(res.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
+}
+
+Future<void> listFunctions() async {
+  final functions = Functions(client);
+  print('Running List Functions API');
+  try {
+    final res = await functions.list();
+    print(res.data);
   } on AppwriteException catch(e) {
     print(e.message);
   }

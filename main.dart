@@ -22,87 +22,140 @@ Future<void> main() async {
   await createUser('${DateTime.now().millisecondsSinceEpoch}@example.com',
       'user@123', 'Some user');
   await listUser();
+  await createFunction();
+  await listFunctions();
 }
 
 Future<void> createCollection() async {
   final database = Database(client);
   print('Running create collection API');
-  final res = await database.createCollection(name: 'Movies', read: [
-    '*'
-  ], write: [
-    '*'
-  ], rules: [
-    {
-      'label': 'Name',
-      'key': 'name',
-      'type': 'text',
-      'default': 'Empty Name',
-      'required': true,
-      'array': false
-    },
-    {
-      'label': 'release_year',
-      'key': 'release_year',
-      'type': 'numeric',
-      'default': 1970,
-      'required': true,
-      'array': false
-    }
-  ]);
-  collectionId = res.data['\$id'];
-  print(res.data);
+  try {
+
+    final res = await database.createCollection(name: 'Movies', read: [
+      '*'
+    ], write: [
+      '*'
+    ], rules: [
+      {
+        'label': 'Name',
+        'key': 'name',
+        'type': 'text',
+        'default': 'Empty Name',
+        'required': true,
+        'array': false
+      },
+      {
+        'label': 'release_year',
+        'key': 'release_year',
+        'type': 'numeric',
+        'default': 1970,
+        'required': true,
+        'array': false
+      }
+    ]);
+    collectionId = res.data['\$id'];
+    print(res.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
 }
 
 Future<void> listCollection() async {
   final database = Database(client);
   print("Running list collection API");
-  final res = await database.listCollections();
-  final collection = res.data["collections"][0];
-  print(collection);
+  try {
+    final res = await database.listCollections();
+    final collection = res.data["collections"][0];
+    print(collection);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
 }
 
 Future<void> addDoc() async {
   final database = Database(client);
   print('Running Add Document API');
-  final res = await database.createDocument(
-      collectionId: collectionId,
-      data: {'name': 'Spider Man', 'release_year': 1920},
-      read: ['*'],
-      write: ['*']);
-  print(res.data);
+  try {
+    final res = await database.createDocument(
+        collectionId: collectionId,
+        data: {'name': 'Spider Man', 'release_year': 1920},
+        read: ['*'],
+        write: ['*']);
+    print(res.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
 }
 
 Future<void> listDoc() async {
   final database = Database(client);
   print('Running List Document API');
-  final response = await database.listDocuments(collectionId: collectionId);
-  print(response.data);
+  try {
+    final response = await database.listDocuments(collectionId: collectionId);
+    print(response.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
 }
 
 Future<void> uploadFile () async {
   final storage = Storage(client);
   print('Running Upload File API');
   final file = await MultipartFile.fromFile('./nature.jpg',filename: 'nature.jpg');
-  final response = await storage.createFile(
-    file: file,//multipart file
-    read: ['*'],
-    write: ['*'],
-  );
-  print(response);
+  try {
+    final response = await storage.createFile(
+      file: file,//multipart file
+      read: ['*'],
+      write: ['*'],
+    );
+    print(response);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
 }
 
 Future<void> createUser(email, password, name) async {
   final users = Users(client);
   print('Running Create User API');
-  final response =
-      await users.create(email: email, password: password, name: name);
-  userId = response.data['\$id'];
-  print(response.data);
+  try {
+    final response =
+        await users.create(email: email, password: password, name: name);
+    userId = response.data['\$id'];
+    print(response.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
 }
 
 Future<void> listUser() async {
   final users = Users(client);
   print('Running List User API');
-  final response = await users.list();
-  print(response.data);
+  try {
+    final response = await users.list();
+    print(response.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
+}
+
+Future<void> createFunction() async {
+  final functions = Functions(client);
+  print('Running Create Function API');
+  try {
+    final res = await functions.create(name: 'test function', execute: [], env: 'dart-2.10');
+    print(res.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
+}
+
+Future<void> listFunctions() async {
+  final functions = Functions(client);
+  print('Running List Functions API');
+  try {
+    final res = await functions.list();
+    print(res.data);
+  } on AppwriteException catch(e) {
+    print(e.message);
+  }
 }

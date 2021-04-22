@@ -6,11 +6,8 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  dart_appwrite: ^0.4.0
+  dart_appwrite: ^0.5.0-dev.1
 
-dependency_overrides:
-  dart_appwrite: 
-    git: https://github.com/appwrite/sdk-for-dart
 
 dev_dependencies:
   pedantic: ^1.9.0

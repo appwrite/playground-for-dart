@@ -3,6 +3,8 @@ import 'package:dart_appwrite/dart_appwrite.dart';
 var client = Client();
 var collectionId;
 var userId;
+var fileId;
+var functionId;
 
 Future<void> main() async {
   client
@@ -16,16 +18,21 @@ Future<void> main() async {
   //running all apis
   await createCollection();
   await listCollection();
-  await deleteCollection();
   await addDoc();
   await listDoc();
+  await deleteCollection();
+
   await uploadFile();
+  await deleteFile();
+
   await createUser('${DateTime.now().millisecondsSinceEpoch}@example.com',
       'user@123', 'Some user');
   await listUser();
   await deleteUser();
+
   await createFunction();
   await listFunctions();
+  await deleteFunction();
 }
 
 Future<void> createCollection() async {
@@ -121,7 +128,19 @@ Future<void> uploadFile() async {
       read: ['*'],
       write: ['*'],
     );
-    print(response);
+    fileId = response.data['\$id'];
+    print(response.data);
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> deleteFile() async {
+  final storage = Storage(client);
+  print('Running Delete File API');
+  try {
+    await storage.deleteFile(fileId: fileId);
+    print("File deleted");
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -169,6 +188,7 @@ Future<void> createFunction() async {
     final res = await functions.create(
         name: 'test function', execute: [], env: 'dart-2.10');
     print(res.data);
+    functionId = res.data['\$id'];
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -180,6 +200,17 @@ Future<void> listFunctions() async {
   try {
     final res = await functions.list();
     print(res.data);
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> deleteFunction() async {
+  final functions = Functions(client);
+  print('Running Delete Function API');
+  try {
+    await functions.delete(functionId: functionId);
+    print('Function deleted');
   } on AppwriteException catch (e) {
     print(e.message);
   }

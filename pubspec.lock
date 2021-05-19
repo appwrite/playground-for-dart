@@ -18,10 +18,12 @@ packages:
   dart_appwrite:
     dependency: "direct main"
     description:
-      name: dart_appwrite
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.5.0-dev.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: "47a41ca6cff5ee3c09129ba8168b12219206e5a4"
+      url: "https://github.com/aw-tests/sdk-for-dart"
+    source: git
+    version: "0.6.0"
   dio:
     dependency: transitive
     description:

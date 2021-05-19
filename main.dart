@@ -174,7 +174,7 @@ Future<void> deleteUser() async {
   final users = Users(client);
   print("Running delete user");
   try {
-    await users.deleteUser(userId: userId);
+    await users.delete(userId: userId);
     print("user deleted");
   } on AppwriteException catch (e) {
     print(e.message);

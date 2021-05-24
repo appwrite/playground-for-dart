@@ -15,10 +15,10 @@ Future<void> main() async {
       .setEndpoint(endpoint) // Make sure your endpoint is accessible
       .setProject(projectid) // Your project ID
       .setKey(secret) // Your appwrite key
-      // .setJWT('jwt') // Enable this to authenticate with JWT (JWT is created using client SDK)
+      // .setJWT('jwt') // Enable this to authenticate with JWT created using client SDK
       .setSelfSigned(status: true); //Do not use this in production
 
-  // testAccountWithJWT(); //requires setJWT
+  // getAccount(); // works only with JWT
 
   await createCollection();
   await listCollection();
@@ -39,7 +39,7 @@ Future<void> main() async {
   await deleteFunction();
 }
 
-Future testAccountWithJWT() async {
+Future getAccount() async {
   final account = Account(client);
   print("Running get Account API");
   try {

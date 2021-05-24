@@ -6,16 +6,20 @@ var userId;
 var fileId;
 var functionId;
 
+var projectid = '60793ca4ce59e'; // Your Project Id
+var endpoint = 'http://localhost/v1'; // Your Endpoint
+var secret = '98c3cbd9c87.....f538630240'; // Your API Key
+
 Future<void> main() async {
   client
-      .setEndpoint(
-          'http://localhost/v1') // Make sure your endpoint is accessible
-      .setProject('60793ca4ce59e') // Your project ID
-      .setKey(
-          '98c3cbd9c8746548e017f58937f0e8c8de0d49e932ac9db38af260cc2d94cd26abf155c26524365046b941404860c8fa23b15547331e4155d5b3ae74619bd97dbed227f717c58bc80bc34f9822c24013ce6585ce2119243a9c95c22e63a95c495d6c8c6f5a7243595a369f60a573c2022689296e3fe99773da1567f538630240') // Your appwrite key
+      .setEndpoint(endpoint) // Make sure your endpoint is accessible
+      .setProject(projectid) // Your project ID
+      .setKey(secret) // Your appwrite key
+      // .setJWT('jwt') // Enable this to authenticate with JWT created using client SDK
       .setSelfSigned(status: true); //Do not use this in production
 
-  //running all apis
+  // getAccount(); // works only with JWT
+
   await createCollection();
   await listCollection();
   await addDoc();
@@ -33,6 +37,17 @@ Future<void> main() async {
   await createFunction();
   await listFunctions();
   await deleteFunction();
+}
+
+Future getAccount() async {
+  final account = Account(client);
+  print("Running get Account API");
+  try {
+    final res1 = await account.get();
+    print(res1.data);
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
 }
 
 Future<void> createCollection() async {
@@ -174,7 +189,7 @@ Future<void> deleteUser() async {
   final users = Users(client);
   print("Running delete user");
   try {
-    await users.deleteUser(userId: userId);
+    await users.delete(userId: userId);
     print("user deleted");
   } on AppwriteException catch (e) {
     print(e.message);

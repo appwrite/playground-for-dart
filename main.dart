@@ -136,7 +136,7 @@ Future<void> uploadFile() async {
   final storage = Storage(client);
   print('Running Upload File API');
   final file =
-      await MultipartFile.fromFile('./nature.jpg', filename: 'nature.jpg');
+      await MultipartFile.fromPath('file', './nature.jpg', filename: 'nature.jpg');
   try {
     final response = await storage.createFile(
       file: file, //multipart file
@@ -201,7 +201,7 @@ Future<void> createFunction() async {
   print('Running Create Function API');
   try {
     final res = await functions.create(
-        name: 'test function', execute: [], env: 'dart-2.10');
+        name: 'test function', execute: [], runtime: 'dart-2.12');
     print(res.data);
     functionId = res.data['\$id'];
   } on AppwriteException catch (e) {

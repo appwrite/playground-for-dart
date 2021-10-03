@@ -6,13 +6,13 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to fill out our bug report form 🎈
+        Thanks for taking the time to fill out our bug report form 🙏
   - type: textarea
     id: steps-to-reproduce
     validations:
       required: true
     attributes:
-      label: "♻ Reproduction steps"
+      label: "👟 Reproduction steps"
       description: "How do you trigger this bug? Please walk us through it step by step."
       placeholder: "When I ..."
   - type: textarea
@@ -32,17 +32,16 @@ body:
       description: "What did actually happen? Add screenshots, if applicable."
       placeholder: "It actually ..."
   - type: dropdown
-    id: appwrite-SDK-version
+    id: appwrite-version
     attributes:
       label: "🎲 Appwrite version"
       description: "What version of Appwrite are you running?"
       options:
-        - Version 0.5.0
-        - Version 0.4.0
-        - Version 0.3.0
-        - Version 0.2.x
-        - Version 0.1.x
-        - Version 0.0.6
+        - Version 0.10.x
+        - Version 0.9.x
+        - Version 0.8.x
+        - Version 0.7.x
+        - Version 0.6.x
         - Different version (specify in environment)
     validations:
       required: true
@@ -78,7 +77,6 @@ body:
     id: read-code-of-conduct
     attributes:
       label: "🏢 Have you read the Code of Conduct?"
-      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/appwrite/appwrite/blob/master/CODE_OF_CONDUCT.md).
       options:
-        - label: "I have read and agree to follow the Code of Conduct"
+        - label: "I have read the [Code of Conduct](https://github.com/appwrite/appwrite/blob/HEAD/CODE_OF_CONDUCT.md)"
           required: true

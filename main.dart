@@ -6,9 +6,9 @@ var userId;
 var fileId;
 var functionId;
 
-var projectid = '60793ca4ce59e'; // Your Project Id
-var endpoint = 'http://localhost/v1'; // Your Endpoint
-var secret = '98c3cbd9c87.....f538630240'; // Your API Key
+var projectid = '608fa1dd20ef0'; // Your Project Id
+var endpoint = 'https://demo.appwrite.io/v1'; // Your Endpoint
+var secret = 'd1a94d585f2b3501a0c7121162cbb722a47bba32583c35acc20ca887d3187d10ea2b061bc9d9f164901f79b8c7f54075edb4d6dadd99318469b9dfa6b9bab883f4f6d7feff7e0857e2919ba315faf617a612c01a5ba51493f7f561c0ac2dcd9962df8da164e44a08b641bd31b2259ce35fd0ff1a816923fde456df7a549647d7'; // Your API Key
 
 Future<void> main() async {
   client
@@ -44,7 +44,7 @@ Future getAccount() async {
   print("Running get Account API");
   try {
     final res1 = await account.get();
-    print(res1.data);
+    print(res1.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -76,8 +76,8 @@ Future<void> createCollection() async {
         'array': false
       }
     ]);
-    collectionId = res.data['\$id'];
-    print(res.data);
+    collectionId = res.$id;
+    print(res.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -88,7 +88,7 @@ Future<void> listCollection() async {
   print("Running list collection API");
   try {
     final res = await database.listCollections();
-    final collection = res.data["collections"][0];
+    final collection = res.collections[0];
     print(collection);
   } on AppwriteException catch (e) {
     print(e.message);
@@ -126,7 +126,7 @@ Future<void> listDoc() async {
   print('Running List Document API');
   try {
     final response = await database.listDocuments(collectionId: collectionId);
-    print(response.data);
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -143,8 +143,8 @@ Future<void> uploadFile() async {
       read: ['*'],
       write: ['*'],
     );
-    fileId = response.data['\$id'];
-    print(response.data);
+    fileId = response.$id;
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -167,8 +167,8 @@ Future<void> createUser(email, password, name) async {
   try {
     final response =
         await users.create(email: email, password: password, name: name);
-    userId = response.data['\$id'];
-    print(response.data);
+    userId = response.$id;
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -179,7 +179,7 @@ Future<void> listUser() async {
   print('Running List User API');
   try {
     final response = await users.list();
-    print(response.data);
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -202,8 +202,8 @@ Future<void> createFunction() async {
   try {
     final res = await functions.create(
         name: 'test function', execute: [], runtime: 'dart-2.12');
-    print(res.data);
-    functionId = res.data['\$id'];
+    print(res.toMap());
+    functionId = res.$id;
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -214,7 +214,7 @@ Future<void> listFunctions() async {
   print('Running List Functions API');
   try {
     final res = await functions.list();
-    print(res.data);
+    print(res.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }

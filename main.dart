@@ -6,9 +6,10 @@ var userId;
 var fileId;
 var functionId;
 
-var projectid = '608fa1dd20ef0'; // Your Project Id
-var endpoint = 'https://demo.appwrite.io/v1'; // Your Endpoint
-var secret = 'd1a94d585f2b3501a0c7121162cbb722a47bba32583c35acc20ca887d3187d10ea2b061bc9d9f164901f79b8c7f54075edb4d6dadd99318469b9dfa6b9bab883f4f6d7feff7e0857e2919ba315faf617a612c01a5ba51493f7f561c0ac2dcd9962df8da164e44a08b641bd31b2259ce35fd0ff1a816923fde456df7a549647d7'; // Your API Key
+var projectid = 'playground'; // Your Project Id
+var endpoint = 'https://dlo12test.appwrite.org/v1'; // Your Endpoint
+var secret =
+    'd9dfb89721d44d799cada445d2b7ded0bfbd4ac8ce789ef0a78802fa6872300c0774e94e07bc8042b5af279951ec5e8fe303e985183a0cea603a129c601b3a63c816eb10dfbcc2053716fde9e5fb572d4b41eb6058a7313646386c8f8cabbec3ae06393e56ab97c4c11dd51ea98f8696ab2e61bda3a19dc6cef399a5e36295f1'; // Your API Key
 
 Future<void> main() async {
   client
@@ -54,29 +55,25 @@ Future<void> createCollection() async {
   final database = Database(client);
   print('Running create collection API');
   try {
-    final res = await database.createCollection(name: 'Movies', read: [
-      '*'
-    ], write: [
-      '*'
-    ], rules: [
-      {
-        'label': 'Name',
-        'key': 'name',
-        'type': 'text',
-        'default': 'Empty Name',
-        'required': true,
-        'array': false
-      },
-      {
-        'label': 'release_year',
-        'key': 'release_year',
-        'type': 'numeric',
-        'default': 1970,
-        'required': true,
-        'array': false
-      }
-    ]);
+    final res = await database.createCollection(
+      collectionId: "movies",
+      permission: 'document',
+      name: 'Movies',
+      read: ['role:all'],
+      write: ['role:all'],
+    );
     collectionId = res.$id;
+    await database.createStringAttribute(
+        collectionId: collectionId,
+        key: 'name',
+        size: 60,
+        xrequired: true);
+    await database.createIntegerAttribute(
+      collectionId: collectionId,
+      key: 'release_year',
+      xrequired: true,
+      array: false,
+    );
     print(res.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
@@ -89,7 +86,7 @@ Future<void> listCollection() async {
   try {
     final res = await database.listCollections();
     final collection = res.collections[0];
-    print(collection);
+    print(collection.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -111,10 +108,11 @@ Future<void> addDoc() async {
   print('Running Add Document API');
   try {
     final res = await database.createDocument(
+        documentId: 'unique()',
         collectionId: collectionId,
         data: {'name': 'Spider Man', 'release_year': 1920},
-        read: ['*'],
-        write: ['*']);
+        read: ['role:all'],
+        write: ['role:all']);
     print(res.data);
   } on AppwriteException catch (e) {
     print(e.message);
@@ -135,13 +133,14 @@ Future<void> listDoc() async {
 Future<void> uploadFile() async {
   final storage = Storage(client);
   print('Running Upload File API');
-  final file =
-      await MultipartFile.fromPath('file', './nature.jpg', filename: 'nature.jpg');
+  final file = await MultipartFile.fromPath('file', './nature.jpg',
+      filename: 'nature.jpg');
   try {
     final response = await storage.createFile(
+      fileId: 'unique()',
       file: file, //multipart file
-      read: ['*'],
-      write: ['*'],
+      read: ['role:all'],
+      write: ['role:all'],
     );
     fileId = response.$id;
     print(response.toMap());
@@ -166,7 +165,7 @@ Future<void> createUser(email, password, name) async {
   print('Running Create User API');
   try {
     final response =
-        await users.create(email: email, password: password, name: name);
+        await users.create(userId: 'unique()', email: email, password: password, name: name);
     userId = response.$id;
     print(response.toMap());
   } on AppwriteException catch (e) {
@@ -201,7 +200,8 @@ Future<void> createFunction() async {
   print('Running Create Function API');
   try {
     final res = await functions.create(
-        name: 'test function', execute: [], runtime: 'dart-2.12');
+      functionId: 'testfunction',
+        name: 'test function', execute: [], runtime: 'php-8.0');
     print(res.toMap());
     functionId = res.$id;
   } on AppwriteException catch (e) {

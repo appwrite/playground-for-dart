@@ -25,17 +25,17 @@ packages:
   dart_appwrite:
     dependency: "direct main"
     description:
-      name: dart_appwrite
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
+      path: "/home/dlohani/Documents/projects/appwrite/appwrite_src/app/sdks/server-dart"
+      relative: false
+    source: path
+    version: "2.0.0"
   http:
     dependency: transitive
     description:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.3"
+    version: "0.13.4"
   http_parser:
     dependency: transitive
     description:
@@ -93,4 +93,4 @@ packages:
     source: hosted
     version: "1.3.0"
 sdks:
-  dart: ">=2.12.0 <3.0.0"
+  dart: ">=2.14.0 <3.0.0"

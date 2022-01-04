@@ -6,14 +6,7 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  dart_appwrite: ^2.0.0
-
-dependency_overrides: 
-  dart_appwrite:
-    # git:
-      # url: https://github.com/appwrite/sdk-for-dart
-      # ref: db-alpha
-    path: /home/dlohani/Documents/projects/appwrite/appwrite_src/app/sdks/server-dart
+  dart_appwrite: ^3.0.0
 
 dev_dependencies:
   pedantic: ^1.9.0

@@ -7,9 +7,8 @@ var fileId;
 var functionId;
 
 var projectid = 'playground'; // Your Project Id
-var endpoint = 'https://dlo12test.appwrite.org/v1'; // Your Endpoint
-var secret =
-    'd9dfb89721d44d799cada445d2b7ded0bfbd4ac8ce789ef0a78802fa6872300c0774e94e07bc8042b5af279951ec5e8fe303e985183a0cea603a129c601b3a63c816eb10dfbcc2053716fde9e5fb572d4b41eb6058a7313646386c8f8cabbec3ae06393e56ab97c4c11dd51ea98f8696ab2e61bda3a19dc6cef399a5e36295f1'; // Your API Key
+var endpoint = 'https://YOUR_ENDPOINT/v1'; // Your Endpoint
+var secret = 'YOUR_API_KEY'; // Your API Key
 
 Future<void> main() async {
   client
@@ -64,10 +63,7 @@ Future<void> createCollection() async {
     );
     collectionId = res.$id;
     await database.createStringAttribute(
-        collectionId: collectionId,
-        key: 'name',
-        size: 60,
-        xrequired: true);
+        collectionId: collectionId, key: 'name', size: 60, xrequired: true);
     await database.createIntegerAttribute(
       collectionId: collectionId,
       key: 'release_year',
@@ -164,8 +160,8 @@ Future<void> createUser(email, password, name) async {
   final users = Users(client);
   print('Running Create User API');
   try {
-    final response =
-        await users.create(userId: 'unique()', email: email, password: password, name: name);
+    final response = await users.create(
+        userId: 'unique()', email: email, password: password, name: name);
     userId = response.$id;
     print(response.toMap());
   } on AppwriteException catch (e) {
@@ -200,8 +196,10 @@ Future<void> createFunction() async {
   print('Running Create Function API');
   try {
     final res = await functions.create(
-      functionId: 'testfunction',
-        name: 'test function', execute: [], runtime: 'php-8.0');
+        functionId: 'testfunction',
+        name: 'test function',
+        execute: [],
+        runtime: 'php-8.0');
     print(res.toMap());
     functionId = res.$id;
   } on AppwriteException catch (e) {

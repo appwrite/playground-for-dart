@@ -6,9 +6,9 @@ var userId;
 var fileId;
 var functionId;
 
-var projectid = '60793ca4ce59e'; // Your Project Id
-var endpoint = 'http://localhost/v1'; // Your Endpoint
-var secret = '98c3cbd9c87.....f538630240'; // Your API Key
+var projectid = 'playground'; // Your Project Id
+var endpoint = 'https://YOUR_ENDPOINT/v1'; // Your Endpoint
+var secret = 'YOUR_API_KEY'; // Your API Key
 
 Future<void> main() async {
   client
@@ -44,7 +44,7 @@ Future getAccount() async {
   print("Running get Account API");
   try {
     final res1 = await account.get();
-    print(res1.data);
+    print(res1.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -54,30 +54,23 @@ Future<void> createCollection() async {
   final database = Database(client);
   print('Running create collection API');
   try {
-    final res = await database.createCollection(name: 'Movies', read: [
-      '*'
-    ], write: [
-      '*'
-    ], rules: [
-      {
-        'label': 'Name',
-        'key': 'name',
-        'type': 'text',
-        'default': 'Empty Name',
-        'required': true,
-        'array': false
-      },
-      {
-        'label': 'release_year',
-        'key': 'release_year',
-        'type': 'numeric',
-        'default': 1970,
-        'required': true,
-        'array': false
-      }
-    ]);
-    collectionId = res.data['\$id'];
-    print(res.data);
+    final res = await database.createCollection(
+      collectionId: "movies",
+      permission: 'document',
+      name: 'Movies',
+      read: ['role:all'],
+      write: ['role:all'],
+    );
+    collectionId = res.$id;
+    await database.createStringAttribute(
+        collectionId: collectionId, key: 'name', size: 60, xrequired: true);
+    await database.createIntegerAttribute(
+      collectionId: collectionId,
+      key: 'release_year',
+      xrequired: true,
+      array: false,
+    );
+    print(res.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -88,8 +81,8 @@ Future<void> listCollection() async {
   print("Running list collection API");
   try {
     final res = await database.listCollections();
-    final collection = res.data["collections"][0];
-    print(collection);
+    final collection = res.collections[0];
+    print(collection.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -111,10 +104,11 @@ Future<void> addDoc() async {
   print('Running Add Document API');
   try {
     final res = await database.createDocument(
+        documentId: 'unique()',
         collectionId: collectionId,
         data: {'name': 'Spider Man', 'release_year': 1920},
-        read: ['*'],
-        write: ['*']);
+        read: ['role:all'],
+        write: ['role:all']);
     print(res.data);
   } on AppwriteException catch (e) {
     print(e.message);
@@ -126,7 +120,7 @@ Future<void> listDoc() async {
   print('Running List Document API');
   try {
     final response = await database.listDocuments(collectionId: collectionId);
-    print(response.data);
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -135,16 +129,17 @@ Future<void> listDoc() async {
 Future<void> uploadFile() async {
   final storage = Storage(client);
   print('Running Upload File API');
-  final file =
-      await MultipartFile.fromPath('file', './nature.jpg', filename: 'nature.jpg');
+  final file = await MultipartFile.fromPath('file', './nature.jpg',
+      filename: 'nature.jpg');
   try {
     final response = await storage.createFile(
+      fileId: 'unique()',
       file: file, //multipart file
-      read: ['*'],
-      write: ['*'],
+      read: ['role:all'],
+      write: ['role:all'],
     );
-    fileId = response.data['\$id'];
-    print(response.data);
+    fileId = response.$id;
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -165,10 +160,10 @@ Future<void> createUser(email, password, name) async {
   final users = Users(client);
   print('Running Create User API');
   try {
-    final response =
-        await users.create(email: email, password: password, name: name);
-    userId = response.data['\$id'];
-    print(response.data);
+    final response = await users.create(
+        userId: 'unique()', email: email, password: password, name: name);
+    userId = response.$id;
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -179,7 +174,7 @@ Future<void> listUser() async {
   print('Running List User API');
   try {
     final response = await users.list();
-    print(response.data);
+    print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -201,9 +196,12 @@ Future<void> createFunction() async {
   print('Running Create Function API');
   try {
     final res = await functions.create(
-        name: 'test function', execute: [], runtime: 'dart-2.12');
-    print(res.data);
-    functionId = res.data['\$id'];
+        functionId: 'testfunction',
+        name: 'test function',
+        execute: [],
+        runtime: 'php-8.0');
+    print(res.toMap());
+    functionId = res.$id;
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -214,7 +212,7 @@ Future<void> listFunctions() async {
   print('Running List Functions API');
   try {
     final res = await functions.list();
-    print(res.data);
+    print(res.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
   }

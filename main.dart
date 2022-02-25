@@ -5,6 +5,7 @@ var collectionId;
 var userId;
 var fileId;
 var functionId;
+var bucketId;
 
 var projectid = 'playground'; // Your Project Id
 var endpoint = 'https://YOUR_ENDPOINT/v1'; // Your Endpoint
@@ -26,8 +27,11 @@ Future<void> main() async {
   await listDoc();
   await deleteCollection();
 
+  await createBucket();
+  await listBucket();
   await uploadFile();
   await deleteFile();
+  await deleteBucket();
 
   await createUser('${DateTime.now().millisecondsSinceEpoch}@example.com',
       'user@123', 'Some user');
@@ -93,7 +97,7 @@ Future<void> deleteCollection() async {
   print("Running delete collection API");
   try {
     await database.deleteCollection(collectionId: collectionId);
-    print("collection deleted");
+    print("collection deleted: $collectionId");
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -126,20 +130,44 @@ Future<void> listDoc() async {
   }
 }
 
+Future<void> createBucket() async {
+  final storage = Storage(client);
+  print("Running create bucket API");
+  try {
+    final bucket = await storage.createBucket(
+        bucketId: 'unique()', name: 'my awesome bucket', permission: 'bucket');
+    bucketId = bucket.$id;
+    print("Bucket created: $bucketId");
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> listBucket() async {
+  final storage = Storage(client);
+  print("Running list buckets API");
+  try {
+    final bucketList = await storage.listBuckets();
+    print("Buckets: " + bucketList.buckets[0].toMap().toString());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
 Future<void> uploadFile() async {
   final storage = Storage(client);
   print('Running Upload File API');
-  final file = await MultipartFile.fromPath('file', './nature.jpg',
-      filename: 'nature.jpg');
+  final file = InputFile(path: './nature.jpg', fileName: 'nature.jpg');
   try {
     final response = await storage.createFile(
+      bucketId: bucketId,
       fileId: 'unique()',
-      file: file, //multipart file
+      file: file,
       read: ['role:all'],
       write: ['role:all'],
     );
     fileId = response.$id;
-    print(response.toMap());
+    print("File uploaded: " + response.toMap().toString());
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -149,8 +177,19 @@ Future<void> deleteFile() async {
   final storage = Storage(client);
   print('Running Delete File API');
   try {
-    await storage.deleteFile(fileId: fileId);
-    print("File deleted");
+    await storage.deleteFile(bucketId: bucketId, fileId: fileId);
+    print("File deleted: $fileId");
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> deleteBucket() async {
+  final storage = Storage(client);
+  print("Running Delete bucket API");
+  try {
+    await storage.deleteBucket(bucketId: bucketId);
+    print("Bucket deleted: $bucketId ");
   } on AppwriteException catch (e) {
     print(e.message);
   }

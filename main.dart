@@ -1,4 +1,5 @@
 import 'package:dart_appwrite/dart_appwrite.dart';
+import 'config.dart';
 
 var client = Client();
 var collectionId;
@@ -7,15 +8,12 @@ var fileId;
 var functionId;
 var bucketId;
 
-var projectid = 'playground'; // Your Project Id
-var endpoint = 'https://YOUR_ENDPOINT/v1'; // Your Endpoint
-var secret = 'YOUR_API_KEY'; // Your API Key
 
 Future<void> main() async {
   client
       .setEndpoint(endpoint) // Make sure your endpoint is accessible
-      .setProject(projectid) // Your project ID
-      .setKey(secret) // Your appwrite key
+      .setProject(projectId) // Your project ID
+      .setKey(key) // Your appwrite key
       // .setJWT('jwt') // Enable this to authenticate with JWT created using client SDK
       .setSelfSigned(status: true); //Do not use this in production
 

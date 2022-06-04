@@ -155,7 +155,7 @@ Future<void> listBucket() async {
 Future<void> uploadFile() async {
   final storage = Storage(client);
   print('Running Upload File API');
-  final file = InputFile(path: './nature.jpg', fileName: 'nature.jpg');
+  final file = InputFile(path: './nature.jpg', filename: 'nature.jpg');
   try {
     final response = await storage.createFile(
       bucketId: bucketId,

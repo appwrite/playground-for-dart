@@ -10,3 +10,5 @@ doc/api/
 .vscode/
 
 config.dart
+dependency_overrides.yaml
+pubspec_overrides.yaml

@@ -2,12 +2,12 @@ import 'package:dart_appwrite/dart_appwrite.dart';
 import 'config.dart';
 
 var client = Client();
+var databaseId;
 var collectionId;
 var userId;
 var fileId;
 var functionId;
 var bucketId;
-
 
 Future<void> main() async {
   client
@@ -18,12 +18,14 @@ Future<void> main() async {
       .setSelfSigned(status: true); //Do not use this in production
 
   // getAccount(); // works only with JWT
-
+  await createDatabase();
+  await listDatabases();
   await createCollection();
   await listCollection();
   await addDoc();
   await listDoc();
   await deleteCollection();
+  await deleteDatabase();
 
   await createBucket();
   await listBucket();
@@ -52,8 +54,33 @@ Future getAccount() async {
   }
 }
 
+Future<void> createDatabase() async {
+  print('Running Create Database API');
+  final databases = Databases(client, databaseId: 'unique()');
+  try {
+    final db =
+        await databases.create(databaseId: 'unique()', name: 'Movies DB');
+    databaseId = db.$id;
+    print(db.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> listDatabases() async {
+  print('Running List Databases API');
+  final databases = Databases(client, databaseId: databaseId);
+  try {
+    final db =
+        await databases.list();
+    print(db.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
 Future<void> createCollection() async {
-  final database = Database(client);
+  final database = Databases(client, databaseId: databaseId);
   print('Running create collection API');
   try {
     final res = await database.createCollection(
@@ -79,7 +106,7 @@ Future<void> createCollection() async {
 }
 
 Future<void> listCollection() async {
-  final database = Database(client);
+  final database = Databases(client, databaseId: databaseId);
   print("Running list collection API");
   try {
     final res = await database.listCollections();
@@ -91,7 +118,7 @@ Future<void> listCollection() async {
 }
 
 Future<void> deleteCollection() async {
-  final database = Database(client);
+  final database = Databases(client, databaseId: databaseId);
   print("Running delete collection API");
   try {
     await database.deleteCollection(collectionId: collectionId);
@@ -102,7 +129,7 @@ Future<void> deleteCollection() async {
 }
 
 Future<void> addDoc() async {
-  final database = Database(client);
+  final database = Databases(client, databaseId: databaseId);
   print('Running Add Document API');
   try {
     final res = await database.createDocument(
@@ -118,11 +145,21 @@ Future<void> addDoc() async {
 }
 
 Future<void> listDoc() async {
-  final database = Database(client);
+  final database = Databases(client, databaseId: databaseId);
   print('Running List Document API');
   try {
     final response = await database.listDocuments(collectionId: collectionId);
     print(response.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> deleteDatabase() async {
+  final databases = Databases(client, databaseId: databaseId);
+  print('Running Delete Database API');
+  try {
+    await databases.delete();
   } on AppwriteException catch (e) {
     print(e.message);
   }

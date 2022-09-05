@@ -18,17 +18,19 @@ packages:
   dart_appwrite:
     dependency: "direct main"
     description:
-      name: dart_appwrite
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "6.0.0"
+      path: "."
+      ref: dev
+      resolved-ref: df1150d205712ed9b9305f4133c74e320d760bed
+      url: "https://github.com/appwrite/sdk-for-dart"
+    source: git
+    version: "7.0.0-dev.1"
   http:
     dependency: transitive
     description:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.4"
+    version: "0.13.5"
   http_parser:
     dependency: transitive
     description:

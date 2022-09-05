@@ -56,10 +56,10 @@ Future getAccount() async {
 
 Future<void> createDatabase() async {
   print('Running Create Database API');
-  final databases = Databases(client, databaseId: 'unique()');
+  final databases = Databases(client);
   try {
     final db =
-        await databases.create(databaseId: 'unique()', name: 'Movies DB');
+        await databases.create(databaseId: ID.unique(), name: 'Movies DB');
     databaseId = db.$id;
     print(db.toMap());
   } on AppwriteException catch (e) {
@@ -69,10 +69,9 @@ Future<void> createDatabase() async {
 
 Future<void> listDatabases() async {
   print('Running List Databases API');
-  final databases = Databases(client, databaseId: databaseId);
+  final databases = Databases(client);
   try {
-    final db =
-        await databases.list();
+    final db = await databases.list();
     print(db.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
@@ -80,20 +79,26 @@ Future<void> listDatabases() async {
 }
 
 Future<void> createCollection() async {
-  final database = Databases(client, databaseId: databaseId);
+  final database = Databases(client);
   print('Running create collection API');
   try {
     final res = await database.createCollection(
+      databaseId: databaseId,
       collectionId: "movies",
-      permission: 'document',
+      documentSecurity: true,
       name: 'Movies',
-      read: ['role:all'],
-      write: ['role:all'],
+      permissions: [Permission.read(Role.any()), Permission.write(Role.any())],
     );
     collectionId = res.$id;
     await database.createStringAttribute(
-        collectionId: collectionId, key: 'name', size: 60, xrequired: true);
+      databaseId: databaseId,
+      collectionId: collectionId,
+      key: 'name',
+      size: 60,
+      xrequired: true,
+    );
     await database.createIntegerAttribute(
+      databaseId: databaseId,
       collectionId: collectionId,
       key: 'release_year',
       xrequired: true,
@@ -106,10 +111,10 @@ Future<void> createCollection() async {
 }
 
 Future<void> listCollection() async {
-  final database = Databases(client, databaseId: databaseId);
+  final database = Databases(client);
   print("Running list collection API");
   try {
-    final res = await database.listCollections();
+    final res = await database.listCollections(databaseId: databaseId);
     final collection = res.collections[0];
     print(collection.toMap());
   } on AppwriteException catch (e) {
@@ -118,10 +123,11 @@ Future<void> listCollection() async {
 }
 
 Future<void> deleteCollection() async {
-  final database = Databases(client, databaseId: databaseId);
+  final database = Databases(client);
   print("Running delete collection API");
   try {
-    await database.deleteCollection(collectionId: collectionId);
+    await database.deleteCollection(
+        databaseId: databaseId, collectionId: collectionId);
     print("collection deleted: $collectionId");
   } on AppwriteException catch (e) {
     print(e.message);
@@ -129,15 +135,16 @@ Future<void> deleteCollection() async {
 }
 
 Future<void> addDoc() async {
-  final database = Databases(client, databaseId: databaseId);
+  final database = Databases(client);
   print('Running Add Document API');
   try {
     final res = await database.createDocument(
-        documentId: 'unique()',
-        collectionId: collectionId,
-        data: {'name': 'Spider Man', 'release_year': 1920},
-        read: ['role:all'],
-        write: ['role:all']);
+      databaseId: databaseId,
+      documentId: 'unique()',
+      collectionId: collectionId,
+      data: {'name': 'Spider Man', 'release_year': 1920},
+      permissions: [Permission.read(Role.any()), Permission.update(Role.any())],
+    );
     print(res.data);
   } on AppwriteException catch (e) {
     print(e.message);
@@ -145,10 +152,11 @@ Future<void> addDoc() async {
 }
 
 Future<void> listDoc() async {
-  final database = Databases(client, databaseId: databaseId);
+  final database = Databases(client);
   print('Running List Document API');
   try {
-    final response = await database.listDocuments(collectionId: collectionId);
+    final response = await database.listDocuments(
+        databaseId: databaseId, collectionId: collectionId);
     print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
@@ -156,10 +164,10 @@ Future<void> listDoc() async {
 }
 
 Future<void> deleteDatabase() async {
-  final databases = Databases(client, databaseId: databaseId);
+  final databases = Databases(client);
   print('Running Delete Database API');
   try {
-    await databases.delete();
+    await databases.delete(databaseId: databaseId);
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -170,7 +178,7 @@ Future<void> createBucket() async {
   print("Running create bucket API");
   try {
     final bucket = await storage.createBucket(
-        bucketId: 'unique()', name: 'my awesome bucket', permission: 'bucket');
+        bucketId: 'unique()', name: 'my awesome bucket', fileSecurity: true);
     bucketId = bucket.$id;
     print("Bucket created: $bucketId");
   } on AppwriteException catch (e) {
@@ -198,8 +206,7 @@ Future<void> uploadFile() async {
       bucketId: bucketId,
       fileId: 'unique()',
       file: file,
-      read: ['role:all'],
-      write: ['role:all'],
+      permissions: [Permission.read(Role.any()), Permission.update(Role.any())],
     );
     fileId = response.$id;
     print("File uploaded: " + response.toMap().toString());

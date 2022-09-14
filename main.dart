@@ -33,8 +33,11 @@ Future<void> main() async {
   await deleteFile();
   await deleteBucket();
 
-  await createUser('${DateTime.now().millisecondsSinceEpoch}@example.com',
-      'user@123', 'Some user');
+  await createUser(
+    '${DateTime.now().millisecondsSinceEpoch}@example.com',
+    'user@123',
+    'Some user',
+  );
   await listUser();
   await deleteUser();
 
@@ -58,8 +61,10 @@ Future<void> createDatabase() async {
   print('Running Create Database API');
   final databases = Databases(client);
   try {
-    final db =
-        await databases.create(databaseId: ID.unique(), name: 'Movies DB');
+    final db = await databases.create(
+      databaseId: ID.unique(),
+      name: 'Movies DB',
+    );
     databaseId = db.$id;
     print(db.toMap());
   } on AppwriteException catch (e) {
@@ -84,10 +89,13 @@ Future<void> createCollection() async {
   try {
     final res = await database.createCollection(
       databaseId: databaseId,
-      collectionId: "movies",
+      collectionId: ID.unique(),
       documentSecurity: true,
       name: 'Movies',
-      permissions: [Permission.read(Role.any()), Permission.write(Role.any())],
+      permissions: [
+        Permission.read(Role.any()),
+        Permission.write(Role.any()),
+      ],
     );
     collectionId = res.$id;
     await database.createStringAttribute(
@@ -127,7 +135,9 @@ Future<void> deleteCollection() async {
   print("Running delete collection API");
   try {
     await database.deleteCollection(
-        databaseId: databaseId, collectionId: collectionId);
+      databaseId: databaseId,
+      collectionId: collectionId,
+    );
     print("collection deleted: $collectionId");
   } on AppwriteException catch (e) {
     print(e.message);
@@ -140,10 +150,16 @@ Future<void> addDoc() async {
   try {
     final res = await database.createDocument(
       databaseId: databaseId,
-      documentId: 'unique()',
+      documentId: ID.unique(),
       collectionId: collectionId,
-      data: {'name': 'Spider Man', 'release_year': 1920},
-      permissions: [Permission.read(Role.any()), Permission.update(Role.any())],
+      data: {
+        'name': 'Spider Man',
+        'release_year': 1920,
+      },
+      permissions: [
+        Permission.read(Role.any()),
+        Permission.update(Role.any()),
+      ],
     );
     print(res.data);
   } on AppwriteException catch (e) {
@@ -156,7 +172,9 @@ Future<void> listDoc() async {
   print('Running List Document API');
   try {
     final response = await database.listDocuments(
-        databaseId: databaseId, collectionId: collectionId);
+      databaseId: databaseId,
+      collectionId: collectionId,
+    );
     print(response.toMap());
   } on AppwriteException catch (e) {
     print(e.message);
@@ -178,7 +196,10 @@ Future<void> createBucket() async {
   print("Running create bucket API");
   try {
     final bucket = await storage.createBucket(
-        bucketId: 'unique()', name: 'my awesome bucket', fileSecurity: true);
+      bucketId: ID.unique(),
+      name: 'my awesome bucket',
+      fileSecurity: true,
+    );
     bucketId = bucket.$id;
     print("Bucket created: $bucketId");
   } on AppwriteException catch (e) {
@@ -204,9 +225,12 @@ Future<void> uploadFile() async {
   try {
     final response = await storage.createFile(
       bucketId: bucketId,
-      fileId: 'unique()',
+      fileId: ID.unique(),
       file: file,
-      permissions: [Permission.read(Role.any()), Permission.update(Role.any())],
+      permissions: [
+        Permission.read(Role.any()),
+        Permission.update(Role.any()),
+      ],
     );
     fileId = response.$id;
     print("File uploaded: " + response.toMap().toString());
@@ -219,7 +243,10 @@ Future<void> deleteFile() async {
   final storage = Storage(client);
   print('Running Delete File API');
   try {
-    await storage.deleteFile(bucketId: bucketId, fileId: fileId);
+    await storage.deleteFile(
+      bucketId: bucketId,
+      fileId: fileId,
+    );
     print("File deleted: $fileId");
   } on AppwriteException catch (e) {
     print(e.message);
@@ -242,7 +269,11 @@ Future<void> createUser(email, password, name) async {
   print('Running Create User API');
   try {
     final response = await users.create(
-        userId: 'unique()', email: email, password: password, name: name);
+      userId: ID.unique(),
+      email: email,
+      password: password,
+      name: name,
+    );
     userId = response.$id;
     print(response.toMap());
   } on AppwriteException catch (e) {
@@ -277,7 +308,7 @@ Future<void> createFunction() async {
   print('Running Create Function API');
   try {
     final res = await functions.create(
-        functionId: 'testfunction',
+        functionId: ID.unique(),
         name: 'test function',
         execute: [],
         runtime: 'php-8.0');

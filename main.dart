@@ -4,6 +4,7 @@ import 'config.dart';
 var client = Client();
 var databaseId;
 var collectionId;
+var documentId;
 var userId;
 var fileId;
 var functionId;
@@ -24,6 +25,7 @@ Future<void> main() async {
   await listCollection();
   await addDoc();
   await listDoc();
+  await deleteDoc();
   await deleteCollection();
   await deleteDatabase();
 
@@ -162,6 +164,7 @@ Future<void> addDoc() async {
       ],
     );
     print(res.data);
+    documentId = res.$id;
   } on AppwriteException catch (e) {
     print(e.message);
   }
@@ -176,6 +179,21 @@ Future<void> listDoc() async {
       collectionId: collectionId,
     );
     print(response.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> deleteDoc() async {
+  final database = Databases(client);
+  print('Running Delete Document API');
+  try {
+    await database.deleteDocument(
+      databaseId: databaseId,
+      collectionId: collectionId,
+      documentId: documentId,
+    );
+    print("Document deleted: $databaseId");
   } on AppwriteException catch (e) {
     print(e.message);
   }

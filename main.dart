@@ -1,4 +1,5 @@
 import 'package:dart_appwrite/dart_appwrite.dart';
+
 import 'config.dart';
 
 var client = Client();
@@ -23,6 +24,7 @@ Future<void> main() async {
   await listDatabases();
   await createCollection();
   await listCollection();
+  await Future.delayed(const Duration(seconds: 1));
   await addDoc();
   await listDoc();
   await deleteDoc();
@@ -239,7 +241,7 @@ Future<void> listBucket() async {
 Future<void> uploadFile() async {
   final storage = Storage(client);
   print('Running Upload File API');
-  final file = InputFile(path: './nature.jpg', filename: 'nature.jpg');
+  final file = InputFile.fromPath(path: './nature.jpg');
   try {
     final response = await storage.createFile(
       bucketId: bucketId,

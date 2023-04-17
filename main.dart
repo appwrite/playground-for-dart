@@ -1,4 +1,5 @@
 import 'package:dart_appwrite/dart_appwrite.dart';
+
 import 'config.dart';
 
 var client = Client();
@@ -6,6 +7,8 @@ var databaseId;
 var collectionId;
 var documentId;
 var userId;
+var teamId;
+var teamMembershipId;
 var fileId;
 var functionId;
 var bucketId;
@@ -23,6 +26,7 @@ Future<void> main() async {
   await listDatabases();
   await createCollection();
   await listCollection();
+  await Future.delayed(const Duration(seconds: 1));
   await addDoc();
   await listDoc();
   await deleteDoc();
@@ -41,6 +45,12 @@ Future<void> main() async {
     'Some user',
   );
   await listUser();
+  await createTeam();
+  await listTeams();
+  await createTeamMembership();
+  await listTeamMemberships();
+  await deleteTeamMembership();
+  await deleteTeam();
   await deleteUser();
 
   await createFunction();
@@ -239,7 +249,7 @@ Future<void> listBucket() async {
 Future<void> uploadFile() async {
   final storage = Storage(client);
   print('Running Upload File API');
-  final file = InputFile(path: './nature.jpg', filename: 'nature.jpg');
+  final file = InputFile.fromPath(path: './nature.jpg');
   try {
     final response = await storage.createFile(
       bucketId: bucketId,
@@ -305,6 +315,88 @@ Future<void> listUser() async {
   try {
     final response = await users.list();
     print(response.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> createTeam() async {
+  final teams = Teams(client);
+  print('Running Create Team API');
+  try {
+    final response = await teams.create(
+      teamId: ID.unique(),
+      name: 'Awesome Team',
+      roles: ['owner'],
+    );
+    teamId = response.$id;
+    print(response.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> listTeams() async {
+  final teams = Teams(client);
+  print('Running List Teams API');
+  try {
+    final response = await teams.list();
+    print(response.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> createTeamMembership() async {
+  final teams = Teams(client);
+  print('Running Create Team Membership API');
+  try {
+    final response = await teams.createMembership(
+      teamId: teamId,
+      roles: ['owner'],
+      url: 'http://localhost',
+      userId: userId,
+    );
+    teamMembershipId = response.$id;
+    print(response.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> listTeamMemberships() async {
+  final teams = Teams(client);
+  print('Running List Team Memberships API');
+  try {
+    final response = await teams.listMemberships(teamId: teamId);
+    print(response.toMap());
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> deleteTeamMembership() async {
+  final teams = Teams(client);
+  print('Running Delete Team Membership API');
+  try {
+    await teams.deleteMembership(
+      teamId: teamId,
+      membershipId: teamMembershipId,
+    );
+    print("membership deleted");
+  } on AppwriteException catch (e) {
+    print(e.message);
+  }
+}
+
+Future<void> deleteTeam() async {
+  final teams = Teams(client);
+  print('Running Delete Team API');
+  try {
+    await teams.delete(
+      teamId: teamId,
+    );
+    print("team deleted");
   } on AppwriteException catch (e) {
     print(e.message);
   }

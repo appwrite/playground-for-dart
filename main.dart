@@ -26,7 +26,6 @@ Future<void> main() async {
   await listDatabases();
   await createCollection();
   await listCollection();
-  await Future.delayed(const Duration(seconds: 1));
   await addDoc();
   await listDoc();
   await deleteDoc();

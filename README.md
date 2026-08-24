@@ -12,28 +12,130 @@ Appwrite playground is a simple way to explore the Appwrite API and Appwrite Dar
 This playground doesn't include any dart best practices, but rather intended to show some of the most simple examples and use cases of using the Appwrite API in your dart application.
 
 ## System Requirements
-* A Linux/Windows/Mac system with Dart or Flutter installed
+* A Linux/Windows/Mac system with Dart 3 installed
 * You have readily available Appwrite running instance (localhost in most cases).
 * Create a project in Appwrite instance using console
-* Generate a secret key in the Appwrite instance using console
+* Generate a secret API key in the Appwrite instance using console
 
 ### Installation
 1. Clone this repository
 2. cd into the repository
-3. Open main.dart file found in the root of the cloned repository
-4. Copy the project_id, endpoint, secret key from the Appwrite Console
-5. Update project_id, endpoint, secret key by copying from the console in the main.dart file
-6. Execute the command `dart run main.dart`
-7. You will see the JSON response in the console
+3. Install the dependencies with `dart pub get`
+4. Copy the project ID, endpoint and API key from the Appwrite Console and export them:
+    ```bash
+    export APPWRITE_ENDPOINT="http://localhost/v1"
+    export APPWRITE_PROJECT_ID="<YOUR_PROJECT_ID>"
+    export APPWRITE_API_KEY="<YOUR_API_KEY>"
+    ```
+    Alternatively, replace the fallback values at the top of `main.dart` directly.
+5. Execute the command `dart run main.dart`
+6. You will see the JSON response in the console
 
-### API Covered in Playground.
-* Create Collection
-* List Collection
-* Add Document
-* List Documents
-* Upload File
-* Create User
-* List User
+The playground creates every resource with a unique ID and deletes it again at the end, so it is safe to run repeatedly.
+
+### API Covered in Playground
+
+- Databases (deprecated since Appwrite 1.8, kept for existing projects)
+    * Create Database
+    * List Databases
+    * Get Database
+    * Update Database
+    * Delete Database
+    * Create Collection
+    * List Collections
+    * Get Collection
+    * Update Collection
+    * Delete Collection
+    * List Attributes
+    * List Indexes
+    * Create Document
+    * List Documents
+    * Get Document
+    * Update Document
+    * Delete Document
+
+- TablesDB
+    * Create Database
+    * List Databases
+    * Get Database
+    * Update Database
+    * Delete Database
+    * Create Table
+    * List Tables
+    * Get Table
+    * Update Table
+    * Delete Table
+    * Create Columns
+    * List Columns
+    * Get Column
+    * Delete Column
+    * Create Index
+    * List Indexes
+    * Delete Index
+    * Create Row
+    * List Rows
+    * Get Row
+    * Update Row
+    * Delete Row
+
+- Transactions
+    * Create Transaction
+    * Get Transaction
+    * List Transactions
+    * Stage Create Row
+    * Stage Update Row
+    * Create Operations (batch staging)
+    * Commit Transaction
+    * Rollback Transaction
+    * Delete Transaction
+
+- Storage
+    * Create Bucket
+    * List Buckets
+    * Get Bucket
+    * Update Bucket
+    * Delete Bucket
+    * Upload File
+    * List Files
+    * Get File
+    * Download File
+    * Preview File
+    * Update File
+    * Delete File
+
+- Users
+    * Create User
+    * List Users
+    * Get User
+    * Update Name
+    * Get Preferences
+    * Update Preferences
+    * Delete User
+
+- Teams
+    * Create Team
+    * List Teams
+    * Get Team
+    * Delete Team
+    * Create Membership
+    * List Memberships
+    * Delete Membership
+
+- Functions
+    * Create Function
+    * List Functions
+    * Get Function
+    * Update Function
+    * Create Variable
+    * List Variables
+    * Get Variable
+    * Update Variable
+    * Delete Variable
+    * List Deployments
+    * List Executions
+    * Delete Function
+
+Uploading a deployment and executing a function are not covered, because this repository does not ship a deployment package to upload.
 
 ## Contributing
 

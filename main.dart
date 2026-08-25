@@ -459,10 +459,13 @@ Future<void> listColumns() async {
 Future<void> getColumn() async {
   print('Running TablesDB Get Column API');
 
+  // Fetches the integer column rather than the text one: as of
+  // dart_appwrite 28.0.0 `getColumn` cannot deserialise a `text` column,
+  // because its response matching has no case for that type.
   final response = await tablesDB.getColumn(
     databaseId: tablesDatabaseId,
     tableId: tableId,
-    key: 'title',
+    key: 'year',
   );
 
   print(response.toMap());
@@ -848,25 +851,37 @@ Future<void> getFile() async {
 Future<void> getFileDownload() async {
   print('Running Get File Download API');
 
-  final response = await storage.getFileDownload(
-    bucketId: bucketId,
-    fileId: fileId,
-  );
+  // Wrapped because binary endpoints can be unavailable on some plans; a
+  // playground should skip them rather than abort the whole run.
+  try {
+    final response = await storage.getFileDownload(
+      bucketId: bucketId,
+      fileId: fileId,
+    );
 
-  print('Downloaded file: ${response.length} bytes');
+    print('Downloaded file: ${response.length} bytes');
+  } on AppwriteException catch (e) {
+    print('Skipped: ${e.message}');
+  }
 }
 
 Future<void> getFilePreview() async {
   print('Running Get File Preview API');
 
-  final response = await storage.getFilePreview(
-    bucketId: bucketId,
-    fileId: fileId,
-    width: 200,
-    height: 200,
-  );
+  // Image transformations are not enabled on every plan, so a failure here
+  // is skipped rather than fatal.
+  try {
+    final response = await storage.getFilePreview(
+      bucketId: bucketId,
+      fileId: fileId,
+      width: 200,
+      height: 200,
+    );
 
-  print('Preview file: ${response.length} bytes');
+    print('Preview file: ${response.length} bytes');
+  } on AppwriteException catch (e) {
+    print('Skipped: ${e.message}');
+  }
 }
 
 Future<void> updateFile() async {
@@ -1060,7 +1075,7 @@ Future<void> createFunction() async {
   final response = await functions.create(
     functionId: ID.unique(),
     name: 'Dart Hello World',
-    runtime: enums.Runtime.dart38,
+    runtime: enums.Runtime.dart312,
     execute: [Role.any()],
     entrypoint: 'lib/main.dart',
     timeout: 15,
@@ -1094,7 +1109,7 @@ Future<void> updateFunction() async {
   final response = await functions.update(
     functionId: functionId,
     name: 'Updated Dart Hello World',
-    runtime: enums.Runtime.dart38,
+    runtime: enums.Runtime.dart312,
     execute: [Role.any()],
     entrypoint: 'lib/main.dart',
     timeout: 30,

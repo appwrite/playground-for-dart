@@ -21,10 +21,10 @@ packages:
     dependency: "direct main"
     description:
       name: dart_appwrite
-      sha256: "30c018c06f8ceda072a290ae9d148f2f1369921605541760c06382d0eaf362bc"
+      sha256: c27e77e012ea556e3d0b003289a759c36dc836a53691ce114e86d9b902f935a9
       url: "https://pub.dev"
     source: hosted
-    version: "27.0.0"
+    version: "28.0.0"
   http:
     dependency: transitive
     description:
